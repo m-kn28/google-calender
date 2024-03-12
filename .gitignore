@@ -1,0 +1,14 @@
+# .gitignore
+
+# virtualenv
+/include/
+/lib/
+/bin/
+
+# logs and cache
+log
+__pycache__
+
+# local settings
+application.log
+service-account.json
