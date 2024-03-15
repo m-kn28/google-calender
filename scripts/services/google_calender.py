@@ -1,25 +1,9 @@
-from dataclasses import dataclass
 from google.oauth2 import service_account
 from googleapiclient.discovery import build, Resource
 from datetime import datetime, timedelta
 
 from lib.custom_logger import logger
-
-
-@dataclass
-class CalendarEvent:
-    summary: str
-    description: str
-    start: str
-    end: str
-
-
-def calendar_event_factory(event: dict) -> CalendarEvent:
-    # Create a calendar event object
-    description = event.get('description', 'No description')
-    start = event['start'].get('dateTime', event['start'].get('date'))
-    end = event['end'].get('dateTime', event['end'].get('date'))
-    return CalendarEvent(summary=event['summary'], description=description, start=start, end=end)
+from entity.calendar import CalendarEvent, calendar_event_factory
 
 
 def get_google_calendar_service(file_path: str) -> Resource:
@@ -39,18 +23,25 @@ def get_calendar_events(service: service_account.Credentials, calendar_id: str, 
     try:
         events_result = service.events().list(calendarId=calendar_id, maxResults=max_results,
                                               singleEvents=True, orderBy='startTime',
-                                              timeMin=time_min_rfc3339).execute()
+                                              updatedMin=time_min_rfc3339).execute()
     except Exception as e:
         logger.error(f"Error: {e}")
-        return None
+        return []
 
     events = events_result.get('items', [])
     if not events:
         logger.info('No upcoming events found.')
-        return None
+        return []
 
-    calendar_events = [
-        calendar_event_factory(e) for e in events if 'dateTime' in e['start'] and 'dateTime' in e['end']
-    ]
+    logger.info(f"Found {len(events)} events in the last {check_hours} hours.")
+
+    if len(events) > 0:
+        calendar_events = [
+            calendar_event_factory(e)
+            for e in events
+            if (e.get('start') and e.get('end')) and ('dateTime' in e['start'] and 'dateTime' in e['end'])
+        ]
+    else:
+        calendar_events = []
     logger.info(f"Calendar Events: {calendar_events}")
     return calendar_events
