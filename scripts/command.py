@@ -6,7 +6,7 @@ from google.oauth2 import service_account
 
 from config.config import SERVICE_ACCOUNT_FILE_PATH, CALENDAR_ID, GOOGLE_CHROME_DRIVER_PATH, SALON_BOARD_USER_ID, SALON_BOARD_PASSWORD
 from services.google_calender import get_google_calendar_service, get_calendar_events
-from services.salon_board import register_salon_board
+from services.salon_board import all_register_salon_board
 from lib.custom_logger import logger
 
 
@@ -24,14 +24,8 @@ def check_calendar_event(service: service_account.Credentials, is_headress: bool
         try:
             events = get_calendar_events(
                 service=service, calendar_id=calendar_id, check_hours=check_hours, max_results=max_results)
-
-            for event in events:
-                logger.info(f"Calendar Event: {event}")
-                try:
-                    register_salon_board(driver_path=GOOGLE_CHROME_DRIVER_PATH, is_headress=is_headress,
-                                         user_id=SALON_BOARD_USER_ID, password=SALON_BOARD_PASSWORD, calendar=event)
-                except Exception as e:
-                    logger.error(f"Failed to register schedule. {e}")
+            all_register_salon_board(driver_path=GOOGLE_CHROME_DRIVER_PATH, is_headress=is_headress,
+                                     user_id=SALON_BOARD_USER_ID, password=SALON_BOARD_PASSWORD, events=events)
         except Exception as e:
             logger.error(f"Failed to get calendar events. {e}")
             continue
