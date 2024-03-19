@@ -14,3 +14,7 @@ LOGGING_BACKUP_COUNT = 30
 SALON_BOARD_LOGIN_URL = 'https://salonboard.com/login/'
 SALON_BOARD_LOGIN_ERROR_URL = 'https://salonboard.com/CNC/login/doLogin/'
 GOOGLE_CALENDAR_TITLE_PATTERN = r'(.*)様 スタイリスト(.*)'
+
+# Set the gmail settings
+CRED_FILE_PATH = "./credentials.json"
+REFRESH_TOKEN_PATH = "./token.json"

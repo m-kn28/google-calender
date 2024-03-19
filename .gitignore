@@ -6,6 +6,10 @@
 /bin/
 .DS_Store
 settings.json
+credential.json
+refresh_token.json
+credentials.json
+
 
 # logs and cache
 log
@@ -18,3 +22,6 @@ service-account.json
 *.log
 driver
 files
+
+# after delete
+get_gmail.py
